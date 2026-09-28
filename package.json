@@ -1,0 +1,48 @@
+{
+  "name": "janki-store",
+  "private": true,
+  "packageManager": "npm@10.9.7",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "setup": "npm install && npm --prefix apps/storefront install",
+    "dev": "concurrently -k -n backend,storefront -c magenta,yellow \"npm run backend:dev\" \"npm run storefront:dev\"",
+    "build": "turbo build && npm --prefix apps/storefront run build",
+    "start": "concurrently -k -n backend,storefront \"npm --prefix apps/backend run start\" \"npm --prefix apps/storefront run start\"",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "backend:dev": "turbo dev --filter=@dtc/backend",
+    "backend:build": "turbo build --filter=@dtc/backend",
+    "storefront:dev": "npm --prefix apps/storefront run dev",
+    "storefront:build": "npm --prefix apps/storefront run build",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "storefront:key": "cd apps/backend && npx medusa exec ./src/scripts/sync-storefront-key.ts",
+    "admin:create": "cd apps/backend && npx medusa user -e admin@jankidesign.com -p ChangeMe123!",
+    "db:migrate": "cd apps/backend && npx medusa db:migrate && npx medusa db:migrate:search"
+  },
+  "devDependencies": {
+    "@medusajs/eslint-plugin": "2.21.1",
+    "eslint": "^9.39.4",
+    "jiti": "^2.7.0",
+    "prettier": "^3.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "turbo": "^2.0.14",
+    "ajv": "^8.13.0",
+    "concurrently": "^10.0.5"
+  },
+  "workspaces": [
+    "apps/backend",
+    "!apps/backend/.medusa/**"
+  ],
+  "overrides": {
+    "eslint": {
+      "ajv": "^6.12.4"
+    },
+    "@eslint/eslintrc": {
+      "ajv": "^6.12.4"
+    }
+  }
+}

@@ -1,0 +1,97 @@
+# Production stack for the Janki Design store on a single VPS.
+#   docker compose -f docker-compose.prod.yml --env-file deploy/.env.production up -d
+# Use deploy/setup-vps.sh for the first install; it creates deploy/.env.production.
+
+name: janki
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: janki
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: janki
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U janki -d janki"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://janki:${POSTGRES_PASSWORD}@postgres:5432/janki
+      REDIS_URL: redis://redis:6379
+      MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+      STOREFRONT_URL: https://${DOMAIN}
+      STORE_CORS: https://${DOMAIN},https://www.${DOMAIN}
+      ADMIN_CORS: https://api.${DOMAIN}
+      AUTH_CORS: https://api.${DOMAIN},https://${DOMAIN},https://www.${DOMAIN}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      CASHFREE_CLIENT_ID: ${CASHFREE_CLIENT_ID:-}
+      CASHFREE_CLIENT_SECRET: ${CASHFREE_CLIENT_SECRET:-}
+      CASHFREE_ENVIRONMENT: ${CASHFREE_ENVIRONMENT:-sandbox}
+      MEDUSA_WORKER_MODE: shared
+    volumes:
+      - backend-static:/app/static
+
+  storefront:
+    build:
+      context: .
+      dockerfile: apps/storefront/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NEXT_PUBLIC_MEDUSA_BACKEND_URL: https://api.${DOMAIN}
+      MEDUSA_BACKEND_URL_INTERNAL: http://backend:9000
+      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${MEDUSA_PUBLISHABLE_KEY}
+      NEXT_PUBLIC_BASE_URL: https://${DOMAIN}
+      NEXT_PUBLIC_DEFAULT_REGION: in
+      NEXT_PUBLIC_CASHFREE_MODE: ${CASHFREE_ENVIRONMENT:-sandbox}
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - storefront
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  postgres-data:
+  redis-data:
+  backend-static:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,194 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  input:focus ~ label,
+  input:not(:placeholder-shown) ~ label {
+    @apply -translate-y-2 text-xsmall-regular;
+  }
+
+  input:focus ~ label {
+    @apply left-0;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    border: 1px solid #212121;
+    -webkit-text-fill-color: #212121;
+    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+  }
+}
+
+@layer components {
+  .content-container {
+    @apply max-w-[1440px] w-full mx-auto px-6;
+  }
+
+  .contrast-btn {
+    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
+  }
+
+  .text-xsmall-regular {
+    @apply text-[10px] leading-4 font-normal;
+  }
+
+  .text-small-regular {
+    @apply text-xs leading-5 font-normal;
+  }
+
+  .text-small-semi {
+    @apply text-xs leading-5 font-semibold;
+  }
+
+  .text-base-regular {
+    @apply text-sm leading-6 font-normal;
+  }
+
+  .text-base-semi {
+    @apply text-sm leading-6 font-semibold;
+  }
+
+  .text-large-regular {
+    @apply text-base leading-6 font-normal;
+  }
+
+  .text-large-semi {
+    @apply text-base leading-6 font-semibold;
+  }
+
+  .text-xl-regular {
+    @apply text-2xl leading-[36px] font-normal;
+  }
+
+  .text-xl-semi {
+    @apply text-2xl leading-[36px] font-semibold;
+  }
+
+  .text-2xl-regular {
+    @apply text-[30px] leading-[48px] font-normal;
+  }
+
+  .text-2xl-semi {
+    @apply text-[30px] leading-[48px] font-semibold;
+  }
+
+  .text-3xl-regular {
+    @apply text-[32px] leading-[44px] font-normal;
+  }
+
+  .text-3xl-semi {
+    @apply text-[32px] leading-[44px] font-semibold;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Janki Design brand layer
+   --------------------------------------------------------------------------- */
+@layer base {
+  body {
+    @apply bg-janki-paper text-janki-ink font-sans antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-janki-gold;
+  }
+}
+
+@layer components {
+  .janki-eyebrow {
+    @apply text-[12px] font-semibold uppercase tracking-[0.2em] text-janki-gold-dark;
+  }
+  .janki-eyebrow-light {
+    @apply text-[12px] font-semibold uppercase tracking-[0.2em] text-janki-gold;
+  }
+  .janki-h1 {
+    @apply font-display text-[40px] leading-[1.05] small:text-[64px];
+  }
+  .janki-h2 {
+    @apply font-display text-[30px] leading-[1.15] small:text-[42px];
+  }
+  .janki-h3 {
+    @apply font-display text-[21px] leading-snug;
+  }
+  .janki-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold transition-colors duration-150;
+  }
+  .janki-btn-primary {
+    @apply janki-btn bg-janki-wine text-janki-ivory hover:bg-janki-wine-3;
+  }
+  .janki-btn-gold {
+    @apply janki-btn bg-janki-lemon text-janki-deep hover:bg-[#fff06a];
+  }
+  .janki-btn-ghost {
+    @apply janki-btn border border-janki-gold text-janki-ivory hover:bg-white/5;
+  }
+  .janki-btn-outline {
+    @apply janki-btn border border-janki-wine text-janki-wine hover:bg-janki-wine hover:text-janki-ivory;
+  }
+  .janki-input {
+    @apply w-full rounded-lg border border-janki-ink/20 bg-white px-4 py-3 text-[15px] text-janki-ink placeholder:text-janki-muted/70 focus:border-janki-wine focus:outline-none focus:ring-1 focus:ring-janki-wine;
+  }
+  .janki-label {
+    @apply mb-1.5 block text-[13px] font-semibold text-janki-ink;
+  }
+  /* Measuring-tape rule used as a section divider */
+  .janki-tape {
+    height: 22px;
+    background-color: #d6b25e;
+    background-image: repeating-linear-gradient(
+        90deg,
+        #3a0d19 0 1px,
+        transparent 1px 8px
+      ),
+      repeating-linear-gradient(90deg, #3a0d19 0 1px, transparent 1px 40px);
+    background-size: 100% 6px, 100% 12px;
+    background-repeat: no-repeat;
+    opacity: 0.95;
+  }
+}
+
+/* Medusa UI components (buttons, links, focus rings) in Janki colours.
+   Unlayered and more specific than the preset's :root so it always wins. */
+html:root {
+  --button-inverted: #4a1020;
+  --button-inverted-hover: #732036;
+  --button-inverted-pressed: #3a0d19;
+  --bg-interactive: #4a1020;
+  --fg-interactive: #732036;
+  --fg-interactive-hover: #4a1020;
+  --border-interactive: #4a1020;
+}

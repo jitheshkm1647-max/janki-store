@@ -1,0 +1,10 @@
+**/node_modules
+**/.next
+**/.medusa
+**/.turbo
+**/.env
+**/.env.local
+**/*.tsbuildinfo
+.git
+deploy/.env.production
+janki-store*.tar.gz

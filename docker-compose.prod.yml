@@ -39,7 +39,7 @@ services:
         condition: service_started
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgres://janki:${POSTGRES_PASSWORD}@postgres:5432/janki
+      DATABASE_URL: postgres://janki:${POSTGRES_PASSWORD}@postgres:5432/janki?sslmode=disable
       REDIS_URL: redis://redis:6379
       MEDUSA_BACKEND_URL: https://api.${DOMAIN}
       STOREFRONT_URL: https://${DOMAIN}

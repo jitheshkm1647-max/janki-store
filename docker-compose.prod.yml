@@ -52,6 +52,9 @@ services:
       CASHFREE_CLIENT_SECRET: ${CASHFREE_CLIENT_SECRET:-}
       CASHFREE_ENVIRONMENT: ${CASHFREE_ENVIRONMENT:-sandbox}
       MEDUSA_WORKER_MODE: shared
+    ports:
+      # Only reachable from the server itself; nginx or Caddy sits in front.
+      - "127.0.0.1:${BACKEND_PORT:-9910}:9000"
     volumes:
       - backend-static:/app/static
 
@@ -70,9 +73,14 @@ services:
       NEXT_PUBLIC_BASE_URL: https://${DOMAIN}
       NEXT_PUBLIC_DEFAULT_REGION: in
       NEXT_PUBLIC_CASHFREE_MODE: ${CASHFREE_ENVIRONMENT:-sandbox}
+    ports:
+      - "127.0.0.1:${STOREFRONT_PORT:-3910}:8000"
 
+  # Only used when nothing else serves ports 80/443 on the server
+  # (setup-vps.sh enables it with --profile caddy).
   caddy:
     image: caddy:2-alpine
+    profiles: ["caddy"]
     restart: unless-stopped
     depends_on:
       - storefront

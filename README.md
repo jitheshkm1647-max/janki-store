@@ -109,7 +109,7 @@ The production stack runs in Docker on one VPS: PostgreSQL, Redis, Medusa, the N
    ```
    The script installs Docker, generates secrets in `deploy/.env.production`, builds everything, and prints the admin login once. Save it.
 3. **Updates:** `cd /opt/janki-store && git pull && bash deploy/setup-vps.sh jankidesign.com`
-4. **Cashfree:** put the keys in `deploy/.env.production`, then run `docker compose -f docker-compose.prod.yml --env-file deploy/.env.production up -d backend storefront --force-recreate`.
+4. **Cashfree:** `cd /opt/janki-store && git pull && bash deploy/set-cashfree.sh`. It asks for the App ID and Secret Key (test or live), checks them with Cashfree, restarts the store and adds Cashfree to checkout. Run it again to switch to live keys.
 5. **Logs:** `docker compose -f docker-compose.prod.yml --env-file deploy/.env.production logs -f backend storefront`
 
 Recommended: KVM 2 (8 GB) or larger. On KVM 1 the script adds swap so builds finish.

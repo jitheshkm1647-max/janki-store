@@ -258,6 +258,32 @@ export async function initiatePaymentSession(
     .catch(medusaError)
 }
 
+/**
+ * Same as initiatePaymentSession, but returns a readable error instead of
+ * throwing. Errors thrown from server actions are hidden in production
+ * builds, so the checkout would otherwise show a generic message.
+ */
+export async function startPaymentSession(
+  cart: HttpTypes.StoreCart,
+  data: HttpTypes.StoreInitializePaymentSession
+): Promise<{ error: string | null }> {
+  try {
+    await initiatePaymentSession(cart, data)
+    return { error: null }
+  } catch (err) {
+    console.error(
+      `Payment session for ${data.provider_id} failed:`,
+      err instanceof Error ? err.message : err
+    )
+    const online = data.provider_id?.includes("cashfree")
+    return {
+      error: online
+        ? "Online payment isn't available right now. Please choose Cash on Delivery, or try again in a little while."
+        : "We couldn't set up this payment method. Please try again or choose another option.",
+    }
+  }
+}
+
 export async function applyPromotions(codes: string[]) {
   const cartId = await getCartId()
 

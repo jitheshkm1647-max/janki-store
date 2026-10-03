@@ -1,7 +1,7 @@
 "use client"
 import { RadioGroup } from "@headlessui/react"
 import { isCashfree, isStripeLike, paymentInfoMap } from "@lib/constants"
-import { initiatePaymentSession } from "@lib/data/cart"
+import { startPaymentSession } from "@lib/data/cart"
 import { CheckCircleSolid, CreditCard } from "@medusajs/icons"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import PaymentContainer, {
@@ -72,9 +72,10 @@ const Payment = ({
     setError(null)
     setSelectedPaymentMethod(method)
     if (isStripeLike(method)) {
-      await initiatePaymentSession(cart, {
+      const { error } = await startPaymentSession(cart, {
         provider_id: method,
       })
+      if (error) setError(error)
     }
   }
 
@@ -111,10 +112,14 @@ const Payment = ({
         activeSession?.provider_id === selectedPaymentMethod
 
       if (!checkActiveSession) {
-        await initiatePaymentSession(cart, {
+        const { error } = await startPaymentSession(cart, {
           provider_id: selectedPaymentMethod,
           data: sessionDataFor(selectedPaymentMethod),
         })
+        if (error) {
+          setError(error)
+          return
+        }
       }
 
       if (!shouldInputPaymentDetails) {

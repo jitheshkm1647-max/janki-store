@@ -180,6 +180,10 @@ KEY=$("${COMPOSE[@]}" exec -T postgres psql -U janki -d janki -tAc \
 [ -n "$KEY" ] || { echo "No publishable key found in the database."; exit 1; }
 sed -i "s/^MEDUSA_PUBLISHABLE_KEY=.*/MEDUSA_PUBLISHABLE_KEY=${KEY}/" "$ENV_FILE"
 
+say "Attaching product photos from static/catalogue"
+"${COMPOSE[@]}" exec -T backend npx medusa exec ./src/scripts/set-product-images.js \
+  || echo "Could not update product photos; the rest of the update continues."
+
 say "Building and starting the storefront"
 # A fresh storefront container builds the site from the latest code and catalogue
 "${COMPOSE[@]}" up -d --build --force-recreate storefront

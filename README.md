@@ -109,6 +109,7 @@ The production stack runs in Docker on one VPS: PostgreSQL, Redis, Medusa, the N
    ```
    The script installs Docker, generates secrets in `deploy/.env.production`, builds everything, and prints the admin login once. Save it.
 3. **Updates:** `cd /opt/janki-store && git pull && bash deploy/setup-vps.sh jankidesign.com`
+   **Product photos:** add files named `<product-handle>-1.jpg`, `-2.jpg` … to `apps/backend/static/catalogue/` and run the update. Photo 1 becomes the thumbnail. This replaces the photos of those products only (also any set in the admin).
 4. **Cashfree:** `cd /opt/janki-store && git pull && bash deploy/set-cashfree.sh`. It asks for the App ID and Secret Key, detects test or live, checks them with Cashfree, restarts the store and adds Cashfree to checkout. Run it again to switch to live keys.
 5. **Logs:** `docker compose -f docker-compose.prod.yml --env-file deploy/.env.production logs -f backend storefront`
 

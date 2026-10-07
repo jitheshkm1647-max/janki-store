@@ -57,3 +57,4 @@ Thumbs.db
 **/.DS_Store.admin-created
 deploy/.env.production
 deploy/.admin-created
+dump.rdb

@@ -37,9 +37,14 @@ const redisModules = REDIS_URL
   : []
 
 /**
- * Product images. Local disk in development; S3-compatible storage
- * (AWS S3, Cloudflare R2, DigitalOcean Spaces) when S3_BUCKET is set.
+ * Product images. Saved to the server's static folder by default, served from
+ * <MEDUSA_BACKEND_URL>/static. S3-compatible storage (AWS S3, Cloudflare R2,
+ * DigitalOcean Spaces) is used instead when S3_BUCKET is set.
  */
+const PUBLIC_BACKEND_URL = (
+  process.env.MEDUSA_BACKEND_URL || "http://localhost:9000"
+).replace(/\/$/, "")
+
 const fileModule = process.env.S3_BUCKET
   ? [
       {
@@ -62,7 +67,24 @@ const fileModule = process.env.S3_BUCKET
         },
       },
     ]
-  : []
+  : [
+      {
+        resolve: "@medusajs/medusa/file",
+        options: {
+          providers: [
+            {
+              resolve: "@medusajs/medusa/file-local",
+              id: "local",
+              options: {
+                // Without this, uploaded images get http://localhost:9000 links
+                // that only work on the server itself.
+                backend_url: `${PUBLIC_BACKEND_URL}/static`,
+              },
+            },
+          ],
+        },
+      },
+    ]
 
 /**
  * Payments: Cash on Delivery uses Medusa's built-in manual provider

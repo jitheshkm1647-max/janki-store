@@ -48,6 +48,11 @@ export default async function setProductImages({ container }: ExecArgs) {
     const files = (sets.get(product.handle) ?? []).sort((a, b) => a.n - b.n)
     const urls = files.map((f) => `${baseUrl}/static/catalogue/${f.file}`)
     const current = (product.images ?? []).map((i) => i?.url)
+    // Photos uploaded in the admin win: only replace starter images.
+    if (current.some((u) => u && !u.includes("/static/catalogue/"))) {
+      logger.info(`${product.handle}: has photos uploaded in the admin, skipped`)
+      continue
+    }
     if (product.thumbnail === urls[0] && JSON.stringify(current) === JSON.stringify(urls)) {
       logger.info(`${product.handle}: already up to date`)
       continue

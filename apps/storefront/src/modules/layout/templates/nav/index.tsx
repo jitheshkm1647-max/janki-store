@@ -11,6 +11,7 @@ import SideMenu from "@modules/layout/components/side-menu"
 import Image from "next/image"
 
 const NAV_LINKS = [
+  { label: "Home", href: "/" },
   { label: "Shop", href: "/store" },
   { label: "Bridal", href: "/bridal" },
   { label: "Custom Stitching", href: "/custom-stitching" },
@@ -36,7 +37,7 @@ export default async function Nav() {
                 currentLocale={currentLocale}
               />
             </div>
-            <ul className="hidden small:flex items-center gap-x-7">
+            <ul className="hidden small:flex items-center gap-x-6 whitespace-nowrap">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
                   <LocalizedClientLink href={l.href}>{l.label}</LocalizedClientLink>
